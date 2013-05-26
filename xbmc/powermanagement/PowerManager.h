@@ -67,6 +67,7 @@ public:
 
   void ProcessEvents();
 private:
+  void OnPrepareSleep();
   void OnSleep();
   void OnWake();
 

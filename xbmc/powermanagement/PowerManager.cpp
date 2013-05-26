@@ -146,12 +146,22 @@ bool CPowerManager::Powerdown()
 
 bool CPowerManager::Suspend()
 {
-  return CanSuspend() ? m_instance->Suspend() : false;
+  if (!CanSuspend())
+    return false;
+
+  OnPrepareSleep();
+
+  return m_instance->Suspend();
 }
 
 bool CPowerManager::Hibernate()
 {
-  return CanHibernate() ? m_instance->Hibernate() : false;
+  if (!CanHibernate())
+    return false;
+
+  OnPrepareSleep();
+
+  return m_instance->Hibernate();
 }
 bool CPowerManager::Reboot()
 {
@@ -188,6 +198,16 @@ void CPowerManager::ProcessEvents()
   m_instance->PumpPowerEvents(this);
 }
 
+void CPowerManager::OnPrepareSleep()
+{
+  CLog::Log(LOGNOTICE, "%s: Preparing sleep", __FUNCTION__);
+
+  //stop all addon services here
+  //we do this here instead in OnSleep cause according to DBUS specification we only have 1 second of time in OnSleep
+  //so shutdowns that may potentially take longer should be issued in here
+  g_application.StopAddonServices();
+}
+
 void CPowerManager::OnSleep()
 {
   CAnnouncementManager::Announce(System, "xbmc", "OnSleep");
@@ -207,12 +227,16 @@ void CPowerManager::OnSleep()
   g_application.StopPlaying();
   g_application.StopShutdownTimer();
   g_application.StopScreenSaverTimer();
+  g_application.CloseNetworkShares();
   CAEFactory::Suspend();
 }
 
 void CPowerManager::OnWake()
 {
   CLog::Log(LOGNOTICE, "%s: Running resume jobs", __FUNCTION__);
+
+  //re-start addon services
+  g_application.StartAddonServices();
 
   // reset out timers
   g_application.ResetShutdownTimers();

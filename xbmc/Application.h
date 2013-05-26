@@ -204,6 +204,9 @@ public:
   void CheckPlayingProgress();
   void CheckAudioScrobblerStatus();
   void ActivateScreenSaver(bool forceType = false);
+  void CloseNetworkShares();
+  void StartAddonServices();
+  void StopAddonServices();
 
   virtual void Process();
   void ProcessSlow();
