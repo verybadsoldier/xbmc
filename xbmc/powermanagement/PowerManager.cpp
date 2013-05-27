@@ -23,6 +23,7 @@
 #include "Application.h"
 #include "cores/AudioEngine/AEFactory.h"
 #include "input/KeyboardStat.h"
+#include "network/Network.h"
 #include "settings/GUISettings.h"
 #include "windowing/WindowingFactory.h"
 #include "utils/log.h"
@@ -32,6 +33,7 @@
 #include "guilib/LocalizeStrings.h"
 #include "guilib/GraphicContext.h"
 #include "dialogs/GUIDialogKaiToast.h"
+#include "settings/AdvancedSettings.h"
 
 #ifdef HAS_LCD
 #include "utils/LCDFactory.h"
@@ -205,7 +207,8 @@ void CPowerManager::OnPrepareSleep()
   //stop all addon services here
   //we do this here instead in OnSleep cause according to DBUS specification we only have 1 second of time in OnSleep
   //so shutdowns that may potentially take longer should be issued in here
-  g_application.StopAddonServices();
+  if (g_advancedSettings.m_stopServicesOnSuspend)
+	  g_application.StopAddonServices();
 }
 
 void CPowerManager::OnSleep()
@@ -231,12 +234,38 @@ void CPowerManager::OnSleep()
   CAEFactory::Suspend();
 }
 
+void CPowerManager::WaitForNic()
+{
+	CLog::Log(LOGDEBUG, "%s: Waithing for first NIC to come up", __FUNCTION__);
+
+	const unsigned maxLoopCount = 50u;
+	const unsigned sleepTimeMs = 200u;
+
+	for(unsigned i=0; i < 50; ++i)
+	{
+		CNetworkInterface* pIface = g_application.getNetwork().GetFirstConnectedInterface();
+		if (pIface && pIface->IsEnabled() && pIface->IsConnected())
+		{
+			CLog::Log(LOGDEBUG, "%s: NIC is up after waiting %d ms", __FUNCTION__, i * sleepTimeMs);
+			return;
+		}
+
+		Sleep(sleepTimeMs);
+	}
+
+	CLog::Log(LOGDEBUG, "%s: NIC did not come up within %d ms... Lets give up...", __FUNCTION__, maxLoopCount * sleepTimeMs);
+}
+
 void CPowerManager::OnWake()
 {
   CLog::Log(LOGNOTICE, "%s: Running resume jobs", __FUNCTION__);
 
+  if (g_advancedSettings.m_waitForNetAfterWakeup)
+    WaitForNic();
+
   //re-start addon services
-  g_application.StartAddonServices();
+  if (g_advancedSettings.m_stopServicesOnSuspend)
+  	g_application.StartAddonServices();
 
   // reset out timers
   g_application.ResetShutdownTimers();
@@ -272,6 +301,7 @@ void CPowerManager::OnWake()
 #endif
 
   CAEFactory::Resume();
+
   g_application.UpdateLibraries();
   g_weatherManager.Refresh();
 

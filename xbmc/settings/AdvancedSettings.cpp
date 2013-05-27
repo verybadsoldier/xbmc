@@ -322,6 +322,9 @@ void CAdvancedSettings::Initialize()
   m_databaseVideo.Reset();
 
   m_logLevelHint = m_logLevel = LOG_LEVEL_NORMAL;
+
+  m_waitForEthAfterWakeup = false;
+  m_stopServicesOnSuspend = false;
 }
 
 bool CAdvancedSettings::Load()
@@ -1049,6 +1052,13 @@ void CAdvancedSettings::ParseSettingsFile(const CStdString &file)
     XMLUtils::GetBoolean(pElement, "visualizedirtyregions", m_guiVisualizeDirtyRegions);
     XMLUtils::GetInt(pElement, "algorithmdirtyregions",     m_guiAlgorithmDirtyRegions);
     XMLUtils::GetInt(pElement, "nofliptimeout",             m_guiDirtyRegionNoFlipTimeout);
+  }
+
+  pElement = pRootElement->FirstChildElement("suspend");
+  if (pElement)
+  {
+	  XMLUtils::GetBoolean(pElement, "waitfornetafterwakup", m_waitForNetAfterWakeup);
+	  XMLUtils::GetBoolean(pElement, "stopservicesonsuspend", m_stopServicesOnSuspend);
   }
 
   // load in the GUISettings overrides:
