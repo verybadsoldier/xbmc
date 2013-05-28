@@ -323,7 +323,7 @@ void CAdvancedSettings::Initialize()
 
   m_logLevelHint = m_logLevel = LOG_LEVEL_NORMAL;
 
-  m_waitForEthAfterWakeup = false;
+  m_waitForNetAfterWakeup = false;
   m_stopServicesOnSuspend = false;
 }
 

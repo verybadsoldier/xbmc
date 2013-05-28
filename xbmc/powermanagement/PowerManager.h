@@ -73,7 +73,7 @@ private:
 
   void OnLowBattery();
 
-  void WaitForNic();
+  void WaitForNet();
 
   IPowerSyscall *m_instance;
 };

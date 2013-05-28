@@ -93,8 +93,6 @@ void CSMB::Deinit()
 
 void CSMB::Init()
 {
-  CLog::Log(LOGDEBUG,"CSMB::Init");
-
   CSingleLock lock(*this);
 
   if (!m_context)

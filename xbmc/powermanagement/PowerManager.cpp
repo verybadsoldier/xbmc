@@ -234,7 +234,7 @@ void CPowerManager::OnSleep()
   CAEFactory::Suspend();
 }
 
-void CPowerManager::WaitForNic()
+void CPowerManager::WaitForNet()
 {
 	CLog::Log(LOGDEBUG, "%s: Waithing for first NIC to come up", __FUNCTION__);
 
@@ -261,7 +261,7 @@ void CPowerManager::OnWake()
   CLog::Log(LOGNOTICE, "%s: Running resume jobs", __FUNCTION__);
 
   if (g_advancedSettings.m_waitForNetAfterWakeup)
-    WaitForNic();
+    WaitForNet();
 
   //re-start addon services
   if (g_advancedSettings.m_stopServicesOnSuspend)
