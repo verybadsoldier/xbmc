@@ -5933,7 +5933,7 @@ void CApplication::StartAddonServices()
   //so only start after-login services if we are not seeing the login screen
   if (g_windowManager.GetActiveWindow() != WINDOW_LOGIN_SCREEN)
   {
-    CLog::Log(LOGDEBUG,"CApplication::StartAddonServices - No login screen? Start after login services");
+    CLog::Log(LOGDEBUG,"CApplication::StartAddonServices - No login screen? So starting after-login-services also");
     CAddonMgr::Get().StartServices(false);
   }
 }

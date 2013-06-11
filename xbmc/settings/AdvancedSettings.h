@@ -365,9 +365,6 @@ class CAdvancedSettings
     bool m_initialized;
 
     void SetDebugMode(bool debug);
-
-    bool m_waitForNetAfterWakeup;
-    bool m_stopServicesOnSuspend;
 };
 
 XBMC_GLOBAL(CAdvancedSettings,g_advancedSettings);
