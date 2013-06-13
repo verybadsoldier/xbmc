@@ -5898,7 +5898,7 @@ void CApplication::SetRenderGUI(bool renderGUI)
 
 CNetwork& CApplication::getNetwork()
 {
-	return *m_network;
+  return *m_network;
 }
 #ifdef HAS_PERFORMANCE_SAMPLE
 CPerformanceStats &CApplication::GetPerformanceStats()

@@ -70,8 +70,6 @@ CSMB::~CSMB()
 
 void CSMB::Deinit()
 {
-  CLog::Log(LOGDEBUG,"CSMB::Deinit");
-
   CSingleLock lock(*this);
 
   /* samba goes loco if deinited while it has some files opened */
