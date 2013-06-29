@@ -5909,7 +5909,7 @@ CPerformanceStats &CApplication::GetPerformanceStats()
 
 void CApplication::CloseNetworkShares()
 {
-  CLog::Log(LOGDEBUG,"CApplication::CloseNetworkShares: Closing all network shares");
+  CLog::Log(LOGNOTICE,"CApplication::CloseNetworkShares: Closing all network shares");
 
 #if defined(HAS_FILESYSTEM_SMB) && !defined(_WIN32)
   smb.Deinit();
@@ -5918,13 +5918,13 @@ void CApplication::CloseNetworkShares()
 
 void CApplication::StopAddonServices()
 {
-  CLog::Log(LOGDEBUG,"CApplication::StopAddonServices");
+  CLog::Log(LOGNOTICE,"CApplication::StopAddonServices");
   CAddonMgr::Get().StopServices(false);
 }
 
 void CApplication::StartAddonServices()
 {
-  CLog::Log(LOGDEBUG,"CApplication::StartAddonServices - before login services");
+  CLog::Log(LOGNOTICE,"CApplication::StartAddonServices - before login services");
 
   //we start all services that run before login
   CAddonMgr::Get().StartServices(true);
@@ -5933,7 +5933,7 @@ void CApplication::StartAddonServices()
   //so only start after-login services if we are not seeing the login screen
   if (g_windowManager.GetActiveWindow() != WINDOW_LOGIN_SCREEN)
   {
-    CLog::Log(LOGDEBUG,"CApplication::StartAddonServices - No login screen? So starting after-login-services also");
+    CLog::Log(LOGNOTICE,"CApplication::StartAddonServices - No login screen? So starting after-login-services also");
     CAddonMgr::Get().StartServices(false);
   }
 }

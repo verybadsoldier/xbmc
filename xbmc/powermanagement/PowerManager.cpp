@@ -235,7 +235,7 @@ void CPowerManager::OnSleep()
 
 void CPowerManager::WaitForNet()
 {
-	CLog::Log(LOGDEBUG, "%s: Waithing for first NIC to come up", __FUNCTION__);
+	CLog::Log(LOGNOTICE, "%s: Waithing for first NIC to come up", __FUNCTION__);
 
 	const unsigned maxLoopCount = 50u;
 	const unsigned sleepTimeMs = 200u;
@@ -245,14 +245,14 @@ void CPowerManager::WaitForNet()
 		CNetworkInterface* pIface = g_application.getNetwork().GetFirstConnectedInterface();
 		if (pIface && pIface->IsEnabled() && pIface->IsConnected())
 		{
-			CLog::Log(LOGDEBUG, "%s: NIC is up after waiting %d ms", __FUNCTION__, i * sleepTimeMs);
+			CLog::Log(LOGNOTICE, "%s: NIC is up after waiting %d ms", __FUNCTION__, i * sleepTimeMs);
 			return;
 		}
 
 		Sleep(sleepTimeMs);
 	}
 
-	CLog::Log(LOGDEBUG, "%s: NIC did not come up within %d ms... Lets give up...", __FUNCTION__, maxLoopCount * sleepTimeMs);
+	CLog::Log(LOGNOTICE, "%s: NIC did not come up within %d ms... Lets give up...", __FUNCTION__, maxLoopCount * sleepTimeMs);
 }
 
 void CPowerManager::OnWake()

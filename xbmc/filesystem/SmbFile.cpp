@@ -70,6 +70,8 @@ CSMB::~CSMB()
 
 void CSMB::Deinit()
 {
+  CLog::Log(LOGNOTICE,"CSMB::Deinit");
+
   CSingleLock lock(*this);
 
   /* samba goes loco if deinited while it has some files opened */
@@ -91,10 +93,14 @@ void CSMB::Deinit()
 
 void CSMB::Init()
 {
+  CLog::Log(LOGNOTICE,"CSMB::Init");
+
   CSingleLock lock(*this);
 
   if (!m_context)
   {
+    CLog::Log(LOGNOTICE,"CSMB::Init - Executing");
+
 #ifdef TARGET_POSIX
     // Create ~/.smb/smb.conf. This file is used by libsmbclient.
     // http://us1.samba.org/samba/docs/man/manpages-3/libsmbclient.7.html
