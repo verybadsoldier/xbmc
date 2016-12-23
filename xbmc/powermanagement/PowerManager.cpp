@@ -32,6 +32,7 @@
 #include "guilib/LocalizeStrings.h"
 #include "interfaces/AnnouncementManager.h"
 #include "interfaces/builtins/Builtins.h"
+#include "network/Network.h"
 #include "pvr/PVRManager.h"
 #include "settings/lib/Setting.h"
 #include "settings/Settings.h"
@@ -46,6 +47,7 @@
 #include "android/AndroidPowerSyscall.h"
 #elif defined(TARGET_POSIX)
 #include "linux/FallbackPowerSyscall.h"
+#include "linux/XTimeUtils.h"
 #if defined(HAS_DBUS)
 #include "linux/ConsoleUPowerSyscall.h"
 #include "linux/ConsoleDeviceKitPowerSyscall.h"
@@ -270,6 +272,8 @@ void CPowerManager::OnWake()
 {
   CLog::Log(LOGNOTICE, "%s: Running resume jobs", __FUNCTION__);
 
+  WaitForNet();
+
   // reset out timers
   g_application.ResetShutdownTimers();
 
@@ -326,4 +330,31 @@ void CPowerManager::SettingOptionsShutdownStatesFiller(const CSetting *setting, 
     list.push_back(make_pair(g_localizeStrings.Get(13014), POWERSTATE_MINIMIZE));
 #endif
   }
+}
+
+void CPowerManager::WaitForNet() const
+{
+  CNetwork& net = g_application.getNetwork();
+
+  // check if we have at least one network interface to wait for
+  if (!net.IsAvailable())
+    return;
+
+  CLog::Log(LOGNOTICE, "%s: Waiting for a network interface to come up", __FUNCTION__);
+
+  const static int numMaxTries = 50;
+  const static int intervalMs = 200;
+
+  for(int i=0; i < numMaxTries; ++i)
+  {
+    if (net.IsConnected())
+    {
+      CLog::Log(LOGNOTICE, "%s: a network interface is up after waiting %d ms", __FUNCTION__, i * intervalMs);
+      return;
+    }
+
+    Sleep(intervalMs);
+  }
+
+  CLog::Log(LOGNOTICE, "%s: No network interface did come up within %d ms... Giving up...", __FUNCTION__, numMaxTries * intervalMs);
 }
